@@ -7,7 +7,9 @@ const Acc = require("./accounts-model")
 exports.checkAccountPayload = (req, res, next) => {
   const { name, budget } = req.body
   if (!name || !budget) {
-    next({ status: 404, message: "name and budget are required" })
+    next({ status: 400, message: "name and budget are required" })
+  } else if (typeof name !== 'string') {
+    next({ status: 400, message: "name must be a string"})
   } else {
     next()
   }
@@ -25,7 +27,7 @@ exports.checkAccountId = async (req, res, next) => {
       res.account = account
       next();
     } else {
-      next({ status: 404, message: "No account with that ID"})
+      next({ status: 404, message: "account not found"})
     }
   } catch (err) { next(e) }
     

@@ -29,7 +29,7 @@ router.post('/', checkAccountPayload, (req, res, next) => {
   // }
   // ending of using async await
   Acc.create(newAcc)
-  .then(acc => res.status(200).json(acc))
+  .then(acc => res.status(201).json(acc))
   .catch(next)
 })
 
@@ -37,7 +37,7 @@ router.put('/:id', checkAccountId, checkAccountPayload, async(req, res, next) =>
   const acc = req.body
   try {
     const newAcc = await Acc.updateById(req.params.id, acc)
-    res.json(newAcc)
+    res.status(200).json(newAcc)
   } catch (err) {
     next(err)
   }
