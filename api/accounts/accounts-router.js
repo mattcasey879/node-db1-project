@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { checkAccountId, checkAccountPayload } = require("./accounts-middleware")
+const { checkAccountId, checkAccountPayload, checkAccountNameUnique } = require("./accounts-middleware")
 const Acc = require("./accounts-model");
 
 router.get('/',async (req, res, next) => {
@@ -18,22 +18,16 @@ router.get('/:id', checkAccountId, async (req, res, next) => {
   res.json(res.account)
 })
 
-router.post('/', checkAccountPayload, (req, res, next) => {
-  const newAcc = req.body
-  // using async await 
-  //    try {
-  //   const data = await Acc.create(newAcc)
-  //   res.status(200).json(data)
-  // } catch (e) {
-  //   next(e)
-  // }
-  // ending of using async await
-  Acc.create(newAcc)
+router.post('/', checkAccountPayload, checkAccountNameUnique, (req, res, next) => {
+  Acc.create({
+    name: req.body.name.trim(),
+    budget: req.body.budget
+  })
   .then(acc => res.status(201).json(acc))
   .catch(next)
 })
 
-router.put('/:id', checkAccountId, checkAccountPayload, async(req, res, next) => {
+router.put('/:id', checkAccountId, checkAccountPayload, checkAccountNameUnique, async(req, res, next) => {
   const acc = req.body
   try {
     const newAcc = await Acc.updateById(req.params.id, acc)
